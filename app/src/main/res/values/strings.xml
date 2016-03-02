@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Location Fence</string>
+    <string name="title_activity_first">FirstActivity</string>
+    <string name="add_item">You don\'t have any addresses set up. \n Tap + to add one.</string>
+    <string name="radius">Radius</string>
+    <string name="blocked_apps">blocked apps</string>
+    <string name="all_apps">All apps</string>
+    <string name="blacklist">Blacklist</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="empty_blacklist">Add apps</string>
+    <string name="confirm">Confirm</string>
+    <string name="removed_from_blacklist">removed from blacklist</string>
+    <string name="undo">Undo</string>
+    <string name="edit_place">change location</string>
+    <string name="manage_apps">Manage apps</string>
+</resources>

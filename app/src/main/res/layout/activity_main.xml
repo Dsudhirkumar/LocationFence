@@ -1,0 +1,133 @@
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/coordinator_layout"
+    android:background="@color/grey"
+    android:fitsSystemWindows="true"
+    tools:context="polohalo.ua.locationfence.FirstActivity">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:background="@color/grey_light"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_item"
+        android:layout_marginTop="24dp"
+        android:layout_centerInParent="true"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:id="@+id/text_geo_block"
+        android:textColor="@color/grey_dark"
+        />
+    <ImageView
+        android:src="@drawable/ic_geo_block"
+        android:id="@+id/ic_geo_block"
+        android:layout_above="@id/text_geo_block"
+        android:layout_centerHorizontal="true"
+        android:layout_width="150dp"
+        android:layout_height="150dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="8dp"
+        android:id="@+id/locationsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>
+
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bottom_sheet"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:behavior_peekHeight="0dp"
+        app:behavior_hideable="true"
+        android:elevation="4dp"
+        android:background="@color/white"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+        <LinearLayout
+            android:id="@+id/item_manage_apps"
+            android:layout_margin="16dp"
+            android:orientation="horizontal"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:src="@drawable/ic_apps"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <TextView
+                android:text="@string/manage_apps"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:textSize="18sp"
+                android:layout_gravity="center_vertical"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/item_edit"
+            android:layout_margin="16dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:src="@drawable/ic_edit"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:text="@string/edit"
+                android:layout_width="wrap_content"
+                android:textSize="18sp"
+                android:layout_marginLeft="32dp"
+                android:layout_gravity="center_vertical"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/item_delete"
+            android:layout_margin="16dp"
+            android:orientation="horizontal"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:src="@drawable/ic_delete"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <TextView
+                android:text="@string/delete"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:textSize="18sp"
+                android:layout_gravity="center_vertical"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_location_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/bottom_sheet"
+        app:layout_anchorGravity="top|right"
+        android:layout_margin="24dp"
+        android:src="@drawable/ic_add"
+        app:elevation="4dp" />
+
+
+    </android.support.design.widget.CoordinatorLayout>
