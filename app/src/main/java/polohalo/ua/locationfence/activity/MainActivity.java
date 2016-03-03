@@ -19,19 +19,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.Geofence;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import polohalo.ua.locationfence.R;
 import polohalo.ua.locationfence.adapter.LocationListAdapter;
 import polohalo.ua.locationfence.model.GeofenceLocation;
-import polohalo.ua.locationfence.service.ScreenService;
+import polohalo.ua.locationfence.service.ForegroundService;
 
 public class MainActivity extends AppCompatActivity {
     private static final int NEW_LOCATION = 1;
     private MainActivity activity;
 
-    BroadcastReceiver mReceiver=null;
+    BroadcastReceiver mReceiver = null;
 
     private static final String TAG = "MainActivity";
     private RecyclerView recList;
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout viewManage;
     private LinearLayout viewDelete;
     private BottomSheetBehavior<LinearLayout> behavior;
+    private GoogleApiClient mApiClient;
+    private ArrayList<Geofence> mGeofenceList;
 
 
     @Override
@@ -56,13 +61,14 @@ public class MainActivity extends AppCompatActivity {
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         textGeo = (TextView) findViewById(R.id.text_geo_block);
         icGeo = (ImageView) findViewById(R.id.ic_geo_block);
-        bottomView =(LinearLayout) coordinatorLayout.findViewById(R.id.bottom_sheet);
+        bottomView = (LinearLayout) coordinatorLayout.findViewById(R.id.bottom_sheet);
 
-        //setUpRecyclerView();
         setUpFAB();
         setUpBottomView();
         setUpListView();
         //launchService();
+
+
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
         //getSupportActionBar().setIcon(R.drawable.ic_launcher);
 
@@ -71,15 +77,10 @@ public class MainActivity extends AppCompatActivity {
         //filter.addAction(Intent.ACTION_SCREEN_OFF);
         //mReceiver = new ScreenOnReceiver();
         //registerReceiver(mReceiver, filter);
-
-        //Intent startIntent = new Intent(MainActivity.this, ForegroundService.class);
-        //startService(startIntent);
-
-
     }
 
 
-    private void setUpBottomView(){
+    private void setUpBottomView() {
         behavior = BottomSheetBehavior.from(bottomView);
         behavior.setHideable(true);
         behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -96,14 +97,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        viewDelete = (LinearLayout)bottomView.findViewById(R.id.item_delete);
-        viewManage = (LinearLayout)bottomView.findViewById(R.id.item_manage_apps);
-        viewEdit = (LinearLayout)bottomView.findViewById(R.id.item_edit);
+        viewDelete = (LinearLayout) bottomView.findViewById(R.id.item_delete);
+        viewManage = (LinearLayout) bottomView.findViewById(R.id.item_manage_apps);
+        viewEdit = (LinearLayout) bottomView.findViewById(R.id.item_edit);
 
         viewManage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapter.removeHighlightedItem();//todo doesnt work when returning from app
+                //adapter.removeHighlightedItem();//todo doesnt work when returning from app
                 setBottomViewState(BottomSheetBehavior.STATE_COLLAPSED);
                 Intent intent = new Intent(MainActivity.this, EditActivity.class);
                 Log.e(TAG, "highlightedItem = " + adapter.getHighlightedId());
@@ -135,15 +136,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    public void setBottomViewState(int state){
+
+    public void setBottomViewState(int state) {
         behavior.setState(state);
 
     }
 
 
-
-    private void setUpFAB(){
-        final FloatingActionButton fab = (FloatingActionButton)  findViewById(R.id.add_location_fab);
+    private void setUpFAB() {
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_location_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Log.e(TAG, "FAB pressed");
@@ -154,27 +155,26 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == NEW_LOCATION) {
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
                 handleListViewUpdate();
-                }
-                else
-                    Log.e(TAG, "back");
-            }
+            } else
+                Log.e(TAG, "back");
+        }
     }
 
     private void handleListViewUpdate() {
         locations = GeofenceLocation.getAll();
-        if(locations.size()!=0) {
-        icGeo.setVisibility(View.GONE);
-        textGeo.setVisibility(View.GONE);
-        }
-        else {
-        icGeo.setVisibility(View.VISIBLE);
-        textGeo.setVisibility(View.VISIBLE);
+        if (locations.size() != 0) {
+            icGeo.setVisibility(View.GONE);
+            textGeo.setVisibility(View.GONE);
+        } else {
+            icGeo.setVisibility(View.VISIBLE);
+            textGeo.setVisibility(View.VISIBLE);
         }
         adapter.updateData();
 
@@ -185,16 +185,17 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         adapter.updateData();
     }
+
     public void launchService() {
         // Construct our Intent specifying the Service
-        Intent i = new Intent(this, ScreenService.class);
+        Intent i = new Intent(this, ForegroundService.class);
         // Add extras to the bundle
         i.putExtra("foo", "bar");
         // Start the service
         startService(i);
     }
 
-    private void setUpListView(){
+    private void setUpListView() {
         recList = (RecyclerView) findViewById(R.id.locationsList);
         recList.setHasFixedSize(true);
         llm = new LinearLayoutManager(this);
@@ -205,20 +206,6 @@ public class MainActivity extends AppCompatActivity {
         handleListViewUpdate();
         setUpBottomView();
     }
-
-/*
-
-    private void setUpRecyclerView(){
-        recList = (RecyclerView) findViewById(R.id.appsList);
-        recList.setHasFixedSize(true);
-        llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recList.setLayoutManager(llm);
-        //adapter = new AppsListAdapter(this);
-        recList.setAdapter(adapter);
-        //adapter.updateData(AppsManager.getAppsList(getApplicationContext()));
-    }*/
-
 
 
     private BroadcastReceiver mainReceiver = new BroadcastReceiver() {
@@ -232,4 +219,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+
 }

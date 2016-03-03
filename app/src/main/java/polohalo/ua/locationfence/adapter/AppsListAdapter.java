@@ -40,7 +40,7 @@ public class AppsListAdapter extends RecyclerView.Adapter<AppsListAdapter.AppVie
         @Override
         protected Void doInBackground(Void... params) {
             apps=AppsManager.getAppsList(context);
-            List<App> blacklistedApps = App.getAllBlacklistedApps();
+            List<App> blacklistedApps = App.getBlacklistedApps(location);
             Log.e(TAG, apps.size() + " versus " + blacklistedApps.size());
 
             for(int i = 0; i<apps.size();i++){
@@ -98,9 +98,6 @@ public class AppsListAdapter extends RecyclerView.Adapter<AppsListAdapter.AppVie
         return viewHolder;
     }
 
-    public void updateDataFromORM() {
-
-    }
 
     public class AppViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -142,7 +139,7 @@ public class AppsListAdapter extends RecyclerView.Adapter<AppsListAdapter.AppVie
 
 
             }
-            Log.e(TAG, "total apps selected " + selectedAppsMap.size() + "  " +  getAdapterPosition());
+            Log.e(TAG, "total apps selected " + selectedAppsMap.size() + "  " +  getAdapterPosition()  + "    "  + location);
             notifyDataSetChanged();
 
         }

@@ -92,9 +92,8 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
         public void onClick(View view) {//todo show bottomSheet with edit and delete option
             Log.e(TAG, "id " + ci.getId());
             if(highlightedView!=null) {
-                if (highlightedView == view) {
+                if (highlightedView == view) {//todo it would be nice to change elevation, BUT setElevation() accepts float which is not dp pixels but simple pixels without scaling to density
                     view.setSelected(false);
-                    highlightedView.setElevation(4);
                     highlightedView = null;
                     Log.e(TAG, "here");
                     highlightedId = null;
@@ -103,10 +102,8 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
                 }
                 else{
                     highlightedView.setSelected(false);
-                    highlightedView.setElevation(4);//todo not sure if px or dp
                     highlightedView = view;
                     highlightedView.setSelected(true);
-                    highlightedView.setElevation(12);
                     highlightedId = ci.getId();//todo why we need id?
                     highlightedPosition = getAdapterPosition();
                     ((MainActivity)context).setBottomViewState(BottomSheetBehavior.STATE_EXPANDED);
@@ -116,7 +113,6 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             else {
                 view.setSelected(true);//todo wont work because of viewholder pattern
                 highlightedView = view;
-                highlightedView.setElevation(12);
 
                 Log.e(TAG,"or here");
 
@@ -132,7 +128,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
         }
     }
     public Long getHighlightedId(){
-        Log.e(TAG, "" + highlightedId);
+        Log.e(TAG, "highlighted id is" + highlightedId);//candidate to break everythinh
         return highlightedId;
     }
     public void removeHighlightedItem(){

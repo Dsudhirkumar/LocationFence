@@ -30,9 +30,10 @@ public class AppsBlacklistAdapter extends RecyclerView.Adapter<AppsBlacklistAdap
     private App lastRemoved;
     private int lastRemovedPostion;
 
-    public void updateData(List<App> apps) {
-        this.apps = apps;
+    public void updateData() {
+        this.apps = App.getBlacklistedApps(location);
         notifyDataSetChanged();
+        Log.e(TAG, "data updated " +  apps.size() + "  " + location);
         //todo remove items which are not in main List
     }
 
@@ -88,19 +89,32 @@ public class AppsBlacklistAdapter extends RecyclerView.Adapter<AppsBlacklistAdap
 
         @Override
         public void onClick(View view) {
+            Log.e(TAG, " size of blacklist1 " + App.getAllBlacklistedApps().size());
             lastRemoved = apps.get(getAdapterPosition());
             lastRemovedPostion = getAdapterPosition();
             String packageName = apps.get(getAdapterPosition()).getPackageName();
             apps.remove(getAdapterPosition());
             App.deleteItem(packageName, location);
             notifyItemRemoved(getAdapterPosition());
+            Log.e(TAG, " size of blacklist2 " + App.getAllBlacklistedApps().size());
+
+
             Snackbar snackbar = Snackbar
                     .make(parentLayout, lastRemoved.getLabel() + " " +context.getResources().getString(R.string.removed_from_blacklist), Snackbar.LENGTH_LONG)
                     .setAction(context.getResources().getString(R.string.undo), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Log.e(TAG, "onCLickSnackBar");
-                            App.addItemToBlacklist(lastRemoved, location);
+                            Log.e(TAG, " size of blacklist3 " + App.getAllBlacklistedApps().size());
+                            //App.addItemToBlacklist(lastRemoved, location);
+                            App app = lastRemoved;
+                            //todo doesnt work because holds reference to the object, workaround
+                            app.setLabel(lastRemoved.getLabel());
+                            app.setLocationId(location);
+                            app.setSelected(true);
+                            app.setPackageName(lastRemoved.getPackageName());
+                            App.addItemToBlacklist(app, location);
+                            Log.e(TAG, " size of blacklist4 " + App.getAllBlacklistedApps().size());
                             apps.add(lastRemovedPostion, lastRemoved);
                             notifyItemInserted(lastRemovedPostion);
                         }

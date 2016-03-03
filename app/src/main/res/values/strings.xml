@@ -14,4 +14,5 @@
     <string name="undo">Undo</string>
     <string name="edit_place">change location</string>
     <string name="manage_apps">Manage apps</string>
+    <string name="app_is_blocked">This app is blocked</string>
 </resources>

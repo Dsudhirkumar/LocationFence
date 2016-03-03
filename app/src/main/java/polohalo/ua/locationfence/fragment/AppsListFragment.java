@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import polohalo.ua.locationfence.model.App;
  */
 public class AppsListFragment extends Fragment {
 
+    private static final String TAG = "AppsListFragment";
     private RecyclerView recList;
     private LinearLayoutManager llm;
     private AppsListAdapter adapter;
@@ -41,6 +43,7 @@ public class AppsListFragment extends Fragment {
         llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
+        Log.e(TAG, "setUpRecycler with " + location);
         adapter = new AppsListAdapter(getActivity(), location);
         recList.setAdapter(adapter);
         updateAdapterData();

@@ -35,7 +35,6 @@ public class BlacklistFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_blacklist, container, false);
         mainLayout = (CoordinatorLayout)view;
         setUpRecyclerView(view);
-        handleListViewUpdate();
         return view;
 
     }
@@ -46,12 +45,6 @@ public class BlacklistFragment extends Fragment {
         return fragment;//todo maybe add more data
     }
 
-    private void handleListViewUpdate() {
-        blacklistedApps = App.getAllBlacklistedApps();
-
-        adapter.updateData(blacklistedApps);
-
-    }
     private void setUpRecyclerView(View view){
         recList = (RecyclerView) view.findViewById(R.id.appsList);
         recList.setHasFixedSize(true);
@@ -61,10 +54,10 @@ public class BlacklistFragment extends Fragment {
         recList.setLayoutManager(llm);
         adapter = new AppsBlacklistAdapter(getActivity(), location, mainLayout);
         recList.setAdapter(adapter);
-        updateAdapterData();//todo filter by location
+        adapter.updateData();//todo filter by location
     }
 
     public void updateAdapterData() {
-        adapter.updateData(App.getBlacklistedApps(location));
+        adapter.updateData();
     }
 }

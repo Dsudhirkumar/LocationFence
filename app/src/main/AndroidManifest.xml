@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
+    <uses-permission android:name="android.permission.GET_TASKS"/>
 
     <application
         android:allowBackup="true"
@@ -35,26 +36,21 @@
             >
 
         </activity>
-        <activity android:name=".activity.EditActivity"
-            android:windowSoftInputMode="adjustResize"
-            >
-
+        <activity android:name=".activity.EditActivity">
         </activity>
-
+        <activity android:name=".activity.BlockedActivity">
+        </activity>
 
         <receiver android:name=".receiver.MonitorReceiver"></receiver>
         <receiver android:name=".receiver.ScreenOnReceiver"></receiver>
 
-        <service
-            android:name=".service.MonitorService"
-            android:exported="false" />
         <service
             android:name=".service.ForegroundService"
             android:exported="false" />
         <service
             android:name=".service.ScreenService"
             android:exported="false" />
-        <service android:name=".GeofenceTransitionsIntentService"/>
+        <service android:name=".service.GeofenceService"/>
 
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
         <meta-data

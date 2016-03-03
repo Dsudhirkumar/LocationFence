@@ -74,7 +74,7 @@ public class EditActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         appsListFragment = AppsListFragment.newInstance(location.getId());
         appsBlacklistFragment = BlacklistFragment.newInstance(location.getId());
-
+        Log.e(TAG,"setUpViewPAger with " + location.getId() );
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(appsListFragment, getString(R.string.all_apps));
         adapter.addFragment(appsBlacklistFragment, getString(R.string.blacklist));
@@ -92,7 +92,7 @@ public class EditActivity extends AppCompatActivity {
                         appsListFragment.updateAdapterData();
                         break;
                     case 1:
-                        appsBlacklistFragment.updateAdapterData();
+                        appsBlacklistFragment.updateAdapterData();//todo this line throws exception
                         break;
                 }
             }

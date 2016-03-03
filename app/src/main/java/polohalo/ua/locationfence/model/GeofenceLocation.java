@@ -53,7 +53,7 @@ public class GeofenceLocation extends Model {
 
     public static void addItem(GeofenceLocation item){
         item.save();
-        getAll();
+        //getAll();
 
     }
     public static void updateItem(GeofenceLocation newData, Long id){
@@ -71,7 +71,7 @@ public class GeofenceLocation extends Model {
     }
     public static void deleteItem(Long id){
         GeofenceLocation.delete(GeofenceLocation.class,id);
-        getAll();
+        //getAll();
     }
 
 

@@ -43,7 +43,7 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnNeverAskAgain;
 import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.RuntimePermissions;
-import polohalo.ua.locationfence.GeofenceTransitionsIntentService;
+import polohalo.ua.locationfence.service.GeofenceService;
 import polohalo.ua.locationfence.R;
 import polohalo.ua.locationfence.geofence.SimpleGeofence;
 import polohalo.ua.locationfence.geofence.SimpleGeofenceStore;
@@ -383,7 +383,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
     private PendingIntent getGeofenceTransitionPendingIntent() {
-        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        Intent intent = new Intent(this, GeofenceService.class);
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 

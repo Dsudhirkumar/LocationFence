@@ -42,7 +42,7 @@ public class ScreenService extends IntentService {
         //mReceiver = new MonitorReceiver();
         //registerReceiver(mReceiver, filter);
         printForegroundTask();
-        startForbiddenActivity();
+        //startForbiddenActivity();
         stopSelf();
     }
 
