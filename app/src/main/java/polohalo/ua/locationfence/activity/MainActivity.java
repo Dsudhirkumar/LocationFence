@@ -1,6 +1,7 @@
 package polohalo.ua.locationfence.activity;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +29,7 @@ import java.util.List;
 import polohalo.ua.locationfence.R;
 import polohalo.ua.locationfence.adapter.LocationListAdapter;
 import polohalo.ua.locationfence.model.GeofenceLocation;
-import polohalo.ua.locationfence.service.ForegroundService;
+import polohalo.ua.locationfence.service.LongRunningService;
 
 public class MainActivity extends AppCompatActivity {
     private static final int NEW_LOCATION = 1;
@@ -66,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
         setUpFAB();
         setUpBottomView();
         setUpListView();
-        //launchService();
+        Log.e(TAG, "startActivitiy");
+        launchService();
 
 
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -77,7 +79,23 @@ public class MainActivity extends AppCompatActivity {
         //filter.addAction(Intent.ACTION_SCREEN_OFF);
         //mReceiver = new ScreenOnReceiver();
         //registerReceiver(mReceiver, filter);
+        //if(isMyServiceRunning()) {
+        //    Log.e(TAG, "ITS RUNNING MG");
+        //    stopService(new Intent(MainActivity.this,ScreenService.class));
+       //}
+
     }
+
+    private boolean isMyServiceRunning() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("polohalo.ua.locationfence.service.ScreenService".equals(service.service.getClassName())) {
+                return true; // Package name matches, our service is running
+            }
+        }
+        return false;
+    }
+
 
 
     private void setUpBottomView() {
@@ -188,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void launchService() {
         // Construct our Intent specifying the Service
-        Intent i = new Intent(this, ForegroundService.class);
+        Intent i = new Intent(this, LongRunningService.class);
         // Add extras to the bundle
         i.putExtra("foo", "bar");
         // Start the service

@@ -104,10 +104,10 @@ public class AppsBlacklistAdapter extends RecyclerView.Adapter<AppsBlacklistAdap
                     .setAction(context.getResources().getString(R.string.undo), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Log.e(TAG, "onCLickSnackBar");
+                            Log.e(TAG, "onCLickSnackBar" + location);
                             Log.e(TAG, " size of blacklist3 " + App.getAllBlacklistedApps().size());
                             //App.addItemToBlacklist(lastRemoved, location);
-                            App app = lastRemoved;
+                            App app = new App();
                             //todo doesnt work because holds reference to the object, workaround
                             app.setLabel(lastRemoved.getLabel());
                             app.setLocationId(location);

@@ -19,7 +19,9 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import polohalo.ua.locationfence.model.GeofenceLocation;
 import polohalo.ua.locationfence.utils.AppsManager;
 
 /**
@@ -53,45 +55,29 @@ Handler handler = new Handler(thread.getLooper());*/
     public IBinder onBind(Intent intent) {
         return null;
     }
-/*
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand");
-        Intent notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setAction("test");
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
-        Notification notification = new NotificationCompat.Builder(this)
-                .setContentTitle("Truiton Music Player")
-                .setTicker("Truiton Music Player")
-                .setContentText("My Music")
-                .setContentIntent(pendingIntent)
-                .setOngoing(true).build();
-        startForeground(123,
-                notification);
-// Run the above code block on the main thread after 2 seconds
-        Log.e(TAG, "before");
-        Log.e(TAG, "after");
 
-        //stopForeground(true);
-        stopSelf();
-
-        return START_STICKY;
-    }*/
     @Override
     public void onCreate(){
         initGeofence();
         Log.e(TAG, "service onCreate");
-        //handler.postDelayed(runnableCode, 5000);//todo if we post from another thread, where all work is done, it would be nice
     }
 
     private void initGeofence() {
         mGeofenceList = new ArrayList<>();
         //todo create list of geofence from orm database
-        mGeofenceList.add(new Geofence.Builder().setRequestId("8").setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
-                .setCircularRegion(50.44858936, 30.45108676, 200).setExpirationDuration(Geofence.NEVER_EXPIRE).build());
+        List<GeofenceLocation> locations = GeofenceLocation.getAll();
+        Log.e(TAG,"setting up geofence with locations = " + locations.size());
+        for(GeofenceLocation location : locations){
+            Geofence geofence = new Geofence.Builder()
+                    .setRequestId(location.getId().toString())
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                    .setCircularRegion(location.getLatitude(), location.getLongitude(), (float)location.getRadius())
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                    .build();
+            mGeofenceList.add(geofence);
+        }
+        //mGeofenceList.add(new Geofence.Builder().setRequestId("8").setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+        //        .setCircularRegion(50.44858936, 30.45108676, 200).setExpirationDuration(Geofence.NEVER_EXPIRE).build());
         mApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -118,6 +104,7 @@ Handler handler = new Handler(thread.getLooper());*/
         GeofencingRequest geofenceRequest = new GeofencingRequest.Builder().addGeofences(mGeofenceList).build();
         LocationServices.GeofencingApi.addGeofences(mApiClient, geofenceRequest,
                 mGeofenceRequestIntent);
+
 
     }
 

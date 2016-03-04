@@ -2,9 +2,10 @@ package polohalo.ua.locationfence.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.util.Log;
 
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 
@@ -36,7 +37,24 @@ import polohalo.ua.locationfence.utils.AppsManager;
 public class GeofenceService extends IntentService {
 
     private static final String TAG = "GeofenceIntentService";
-    private GoogleApiClient mGoogleApiClient;
+    HandlerThread handlerThread = new HandlerThread("MyHandlerThread");
+    Handler handler;
+    private long triggeredGeoFenceId;
+    private Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+            // Do something here on the main thread
+            Log.e("Handlers", "Called on  customThread");
+            if (AppsManager.blacklistContains(triggeredGeoFenceId)) {
+                Log.e(TAG, "it contains!");
+                if (AppsManager.foregroundTaskIsBlocked(AppsManager.printForegroundTask(GeofenceService.this))) {
+                    startBlockedActivity(AppsManager.printForegroundTask(GeofenceService.this));
+                    Log.e(TAG, "blocked this app");
+                }
+            }
+            handler.postDelayed(runnableCode, 10000);
+        }
+    };
 
     public GeofenceService() {
         super("service-tag");
@@ -47,31 +65,42 @@ public class GeofenceService extends IntentService {
         super.onCreate();
         Log.e(TAG, "onCreate, here");
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        handlerThread.quit();
+        Log.e(TAG, "onDestroy, here");
+    }
 
     @Override
     protected void onHandleIntent(Intent intent) {//todo stop stop stop ws should start annoying service to monitor foreground app all the time, not like this
         Log.e(TAG, "onHandleIntent");
         GeofencingEvent geoFenceEvent = GeofencingEvent.fromIntent(intent);
-        if (geoFenceEvent.hasError()) {
-            int errorCode = geoFenceEvent.getErrorCode();
-            Log.e(TAG, "Location Services error: " + errorCode);
+        if (geoFenceEvent.hasError()||geoFenceEvent.getTriggeringGeofences()==null) {
+            //int errorCode = geoFenceEvent.getErrorCode();
+            Log.e(TAG, "Location Services error");
+            stopRepeatingService(triggeredGeoFenceId);
         } else {
-            String triggeredGeoFenceId = geoFenceEvent.getTriggeringGeofences().get(0).getRequestId();
+            triggeredGeoFenceId =Long.valueOf(geoFenceEvent.getTriggeringGeofences().get(0).getRequestId());
             int transitionType = geoFenceEvent.getGeofenceTransition();
             if (Geofence.GEOFENCE_TRANSITION_ENTER == transitionType) {
                 Log.e(TAG, "entering geofence");
-                if(AppsManager.blacklistContains(triggeredGeoFenceId)) {
-                    Log.e(TAG, "it contains!");
-                    if (AppsManager.foregroundTaskIsBlocked(AppsManager.printForegroundTask(this))) {
-                        startBlockedActivity(AppsManager.printForegroundTask(this));
-                        Log.e(TAG, "blocked this app");
-                    }
-                }
+                startRepeatingService(triggeredGeoFenceId);
             } else if (Geofence.GEOFENCE_TRANSITION_EXIT == transitionType) {
-                Log.e(TAG,"exiting geofence");
+                Log.e(TAG, "exiting geofence");
+                stopRepeatingService(triggeredGeoFenceId);
             }
             Log.e(TAG, "with id = " + triggeredGeoFenceId);
         }
+    }
+
+    private void stopRepeatingService(Long triggeredGeoFenceId) {
+        handlerThread.quit();//todo stop repeating
+    }
+
+    private void startRepeatingService(Long triggeredGeoFenceId) {
+        handler.postDelayed(runnableCode, 10000);
+
     }
 
     private void startBlockedActivity(String taskName){

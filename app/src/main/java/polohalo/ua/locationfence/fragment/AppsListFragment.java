@@ -32,9 +32,18 @@ public class AppsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_appslist, container, false);
+        if (savedInstanceState != null)
+            location = savedInstanceState.getLong("locationId");
         setUpRecyclerView(view);
+
         return view;
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("locationId", location);
     }
 
     private void setUpRecyclerView(View view){
@@ -57,6 +66,7 @@ public class AppsListFragment extends Fragment {
     }
 
     public void updateAdapterData() {
-        adapter.updateData();
+        if(adapter!=null)//for state changes
+            adapter.updateData();
     }
 }

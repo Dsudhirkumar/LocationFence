@@ -71,13 +71,12 @@ public class AppsManager {
 
     }
 
-    public static boolean blacklistContains(String triggeredGeoFenceId) {
-        Long locationId = Long.valueOf(triggeredGeoFenceId);
-        blockedApps = App.getBlacklistedApps(locationId);
+    public static boolean blacklistContains(Long triggeredGeoFenceId) {
+        blockedApps = App.getBlacklistedApps(triggeredGeoFenceId);
         Log.e(TAG, blockedApps.size() + "   " + App.getAllBlacklistedApps().size() + "  " + triggeredGeoFenceId);
         for(App app : blockedApps){
-            Log.e(TAG, app.getLocationId() +  "  " + locationId);
-            if(app.getLocationId().equals(locationId))
+            Log.e(TAG, app.getLocationId() +  "  " + triggeredGeoFenceId);
+            if(app.getLocationId().equals(triggeredGeoFenceId))
                 return true;
         }
         return false;

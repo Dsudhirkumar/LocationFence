@@ -36,14 +36,29 @@ public class EditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
-        Intent intent = getIntent();
-        Log.e(TAG, "getLong " + intent.getExtras().getLong("id"));
-        location = GeofenceLocation.getById(intent.getExtras().getLong("id"));
+        if (savedInstanceState != null) {
+            // Restore value of members from saved state
+            location = GeofenceLocation.getById(savedInstanceState.getLong("locationId"));
+        }
+        else {
+            Intent intent = getIntent();
+            Log.e(TAG, "getLong " + intent.getExtras().getLong("id"));
+            location = GeofenceLocation.getById(intent.getExtras().getLong("id"));
+        }
         setUpViewPager();
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        Log.e(TAG, "ACTIVITY" + location.getId());
 
 
     }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putLong("locationId", location.getId());
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

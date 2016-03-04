@@ -34,9 +34,17 @@ public class BlacklistFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_blacklist, container, false);
         mainLayout = (CoordinatorLayout)view;
+        if (savedInstanceState != null)
+            location = savedInstanceState.getLong("locationId");
         setUpRecyclerView(view);
         return view;
 
+           }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("locationId", location);
     }
 
     public static BlacklistFragment newInstance(Long location) {
@@ -58,6 +66,7 @@ public class BlacklistFragment extends Fragment {
     }
 
     public void updateAdapterData() {
-        adapter.updateData();
+        if(adapter!=null)
+            adapter.updateData();
     }
 }
