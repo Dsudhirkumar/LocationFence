@@ -2,6 +2,7 @@ package polohalo.ua.locationfence.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,9 +22,10 @@ public class BlockedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState!=null)
-            app =AppsManager.getAppByName(savedInstanceState.getString("taskName"), getBaseContext());
+            app =AppsManager.getAppByPackage(savedInstanceState.getString("taskName"), getBaseContext());
         else
-            app = AppsManager.getAppByName(getIntent().getExtras().getString("taskName"), getBaseContext());
+            app = AppsManager.getAppByPackage(getIntent().getExtras().getString("taskName"), getBaseContext());
+        Log.e(TAG, getIntent().getExtras().getString("taskName"));
         setContentView(R.layout.activity_blocked);
         setUpViews();
 
@@ -49,7 +51,7 @@ public class BlockedActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        finish();//to prevent these activities from stacking,
+        //to prevent these activities from stacking,
         // only way because service can only start new activities
         // and does not override old ones.
     }

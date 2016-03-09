@@ -53,12 +53,12 @@ public class MainActivity extends AppCompatActivity {
     private SwitchCompat toggleButton;
     private CoordinatorLayout coordinatorLayout;
     private List<GeofenceLocation> locations = new ArrayList<>();
-    private LinearLayout bottomView;
+    private View bottomView;
 
     private LinearLayout viewEdit;
     private LinearLayout viewManage;
     private LinearLayout viewDelete;
-    private BottomSheetBehavior<LinearLayout> behavior;
+    private BottomSheetBehavior behavior;
     private GoogleApiClient mApiClient;
     private ArrayList<Geofence> mGeofenceList;
     private Intent foregroundIntent;
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         toggleButton = (SwitchCompat) findViewById(R.id.toggle_button);
 
         icGeo = (ImageView) findViewById(R.id.ic_geo_block);
-        bottomView = (LinearLayout) coordinatorLayout.findViewById(R.id.bottom_sheet);
+        bottomView =  findViewById(R.id.design_bottom_sheet);
 
         setUpFAB();
         setUpBottomView();
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         checkForUsagePermission();
         adapter.updateData();
-        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        //behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         launchNotificationService();
 
     }

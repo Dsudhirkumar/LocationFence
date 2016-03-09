@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/grey"
     android:layout_height="match_parent">
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_margin="16dp"
+        android:background="@color/grey_light"
+        android:elevation="10dp"
         android:layout_height="wrap_content">
     <ImageView
         android:layout_width="100dp"
         android:src="@drawable/ic_default_launcher"
         android:id="@+id/app_icon"
+        android:layout_margin="8dp"
         android:layout_height="100dp" />
         <TextView
             android:id="@+id/app_name"
             android:text="@string/app_name"
-            android:textSize="18sp"
+            android:textSize="20sp"
             android:textColor="@color/black"
+            android:gravity="center_horizontal"
+            android:layout_margin="8dp"
             android:layout_toRightOf="@id/app_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/app_package"
             android:layout_below="@id/app_name"
+            android:layout_margin="8dp"
             android:text="@string/packageName"
             android:textSize="18sp"
-
             android:layout_toRightOf="@id/app_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -31,6 +38,9 @@
         android:text="@string/app_is_blocked"
         android:layout_gravity="center"
         android:textSize="16sp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
         android:layout_below="@id/app_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

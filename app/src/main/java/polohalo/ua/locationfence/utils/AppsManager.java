@@ -119,12 +119,13 @@ public class AppsManager {
 
     }
 
-    public static App getAppByName(String taskName, Context context) {
-        List<App> apps = getAppsList(context);
-        for(App app : apps){
-            if(taskName.equals(app.getLabel()))
-                return app;
-        }
-        return new App();
-    }
-}
+
+
+    public static App getAppByPackage(String taskName, Context context) {
+            List<App> apps = getAppsList(context);
+            for(App app : apps){
+                if(taskName.equals(app.getPackageName()))
+                    return app;
+            }
+            return new App();
+        }}
