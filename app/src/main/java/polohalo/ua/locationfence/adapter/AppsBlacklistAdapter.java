@@ -15,6 +15,7 @@ import java.util.List;
 
 import polohalo.ua.locationfence.R;
 import polohalo.ua.locationfence.model.App;
+import polohalo.ua.locationfence.model.GeofenceLocation;
 
 /**
  * Created by mac on 2/20/16.
@@ -93,6 +94,7 @@ public class AppsBlacklistAdapter extends RecyclerView.Adapter<AppsBlacklistAdap
             lastRemoved = apps.get(getAdapterPosition());
             lastRemovedPostion = getAdapterPosition();
             String packageName = apps.get(getAdapterPosition()).getPackageName();
+            GeofenceLocation.decreaseAppCount(location);
             apps.remove(getAdapterPosition());
             App.deleteItem(packageName, location);
             notifyItemRemoved(getAdapterPosition());
@@ -114,6 +116,7 @@ public class AppsBlacklistAdapter extends RecyclerView.Adapter<AppsBlacklistAdap
                             app.setSelected(true);
                             app.setPackageName(lastRemoved.getPackageName());
                             App.addItemToBlacklist(app, location);
+                            GeofenceLocation.increaseAppCount(location);
                             Log.e(TAG, " size of blacklist4 " + App.getAllBlacklistedApps().size());
                             apps.add(lastRemovedPostion, lastRemoved);
                             notifyItemInserted(lastRemovedPostion);

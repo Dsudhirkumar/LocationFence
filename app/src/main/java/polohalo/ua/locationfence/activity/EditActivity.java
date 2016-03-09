@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +19,9 @@ import java.util.List;
 import polohalo.ua.locationfence.R;
 import polohalo.ua.locationfence.fragment.AppsListFragment;
 import polohalo.ua.locationfence.fragment.BlacklistFragment;
+import polohalo.ua.locationfence.fragment.TimerDialogFragment;
 import polohalo.ua.locationfence.model.GeofenceLocation;
+import polohalo.ua.locationfence.service.GeofenceEventService;
 
 /**
  * Created by mac on 2/28/16.
@@ -30,6 +33,7 @@ public class EditActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private GeofenceLocation location;
     private AppsListFragment appsListFragment;
+    private Toolbar toolbar;
     private BlacklistFragment appsBlacklistFragment;
 
     @Override
@@ -46,8 +50,18 @@ public class EditActivity extends AppCompatActivity {
             location = GeofenceLocation.getById(intent.getExtras().getLong("id"));
         }
         setUpViewPager();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        //stopService(new Intent(EditActivity.this, ApiClientService.class));
+        //stopService(new Intent(EditActivity.this, GeofenceEventService.class));
+
+
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
+        getSupportActionBar().setTitle("");
         Log.e(TAG, "ACTIVITY" + location.getId());
+        GeofenceEventService.setRunning(false);
 
 
     }
@@ -77,6 +91,14 @@ public class EditActivity extends AppCompatActivity {
                 Intent intent = new Intent(EditActivity.this, LocationActivity.class);
                 intent.putExtra("id", location.getId());//todo parcel doesnt work with this orm library
                 startActivityForResult(intent, EDIT_LOCATION);
+                return true;
+            case R.id.action_timer://todo get back
+                FragmentManager fm = getSupportFragmentManager();
+                TimerDialogFragment dialog = TimerDialogFragment.newInstance();
+                dialog.show(fm, "");
+                return true;
+            case android.R.id.home:
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -14,5 +14,21 @@
     <string name="undo">Undo</string>
     <string name="edit_place">change location</string>
     <string name="manage_apps">Manage apps</string>
-    <string name="app_is_blocked">This app is blocked</string>
+    <string name="app_is_blocked">This app was blocked from Location Fence app.</string>
+    <string name="label_hint">Label for this place (optional)</string>
+    <string name="message_hint">Message to show on block screen (optional)</string>
+    <string name="dialog_title">Grant permission</string>
+    <string name="dialog_content">Go to settings to approve usage stats</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="background_service">Run in background</string>
+    <string name="timer">Trigger timer</string>
+    <string name="timer_hint">Here you can change frequency of apps monitoring</string>
+    <string name="dialog_timer_title">Timer Settings</string>
+    <string name="close">Close</string>
+    <string name="period">Period = 8 sec</string>
+    <string name="warning">WARNING: Smaller period leads to poor battery life</string>
+    <string name="packageName">Package name</string>
+    <string name="list_locations">Geofences</string>
+    <string name="blocked_app">blocked app</string>
 </resources>

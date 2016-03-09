@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#F44336</color>
-    <color name="colorPrimaryDark">#D32F2F</color>
-    <color name="colorAccent">#FFEB3B</color>
+    <color name="colorPrimary">#607D8B</color>
+    <color name="colorPrimaryDark">#455A64</color>
+    <color name="colorAccent">#009688</color>
     <color name="textPrimary">#212121</color>
-    <color name="lightPrimary">#FFCDD2</color>
+    <color name="lightPrimary">#CFD8DC</color>
     <color name="textSecondary">#727272</color>
     <color name="dividerColour">#B6B6B6</color>
     <color name="grey">#eeeeee</color>
@@ -13,5 +13,17 @@
     <color name="grey_dark">#a1a1a1</color>
     <color name="map_marker_cirle">#66727272</color>
     <color name="black">#000000</color>
+    <color name="blue">#A1D1F6</color>
+    <color name="transparent">#FFFFFFFF</color>
+
+    <!--
+    <color name="colorPrimary">#F44336</color>
+    <color name="colorPrimaryDark">#D32F2F</color>
+    <color name="colorAccent">#FFEB3B</color>
+    <color name="textPrimary">#212121</color>
+    <color name="lightPrimary">#FFCDD2</color>
+    <color name="textSecondary">#727272</color>
+    <color name="dividerColour">#B6B6B6</color>
+    -->
 
 </resources>

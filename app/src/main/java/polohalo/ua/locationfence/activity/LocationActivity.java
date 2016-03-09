@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -43,22 +44,10 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnNeverAskAgain;
 import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.RuntimePermissions;
-import polohalo.ua.locationfence.service.GeofenceService;
 import polohalo.ua.locationfence.R;
-import polohalo.ua.locationfence.geofence.SimpleGeofence;
-import polohalo.ua.locationfence.geofence.SimpleGeofenceStore;
 import polohalo.ua.locationfence.model.GeofenceLocation;
+import polohalo.ua.locationfence.service.GeofenceEventService;
 import polohalo.ua.locationfence.utils.LocationManager;
-
-import static polohalo.ua.locationfence.geofence.Constants.ANDROID_BUILDING_ID;
-import static polohalo.ua.locationfence.geofence.Constants.ANDROID_BUILDING_LATITUDE;
-import static polohalo.ua.locationfence.geofence.Constants.ANDROID_BUILDING_LONGITUDE;
-import static polohalo.ua.locationfence.geofence.Constants.ANDROID_BUILDING_RADIUS_METERS;
-import static polohalo.ua.locationfence.geofence.Constants.GEOFENCE_EXPIRATION_TIME;
-import static polohalo.ua.locationfence.geofence.Constants.YERBA_BUENA_ID;
-import static polohalo.ua.locationfence.geofence.Constants.YERBA_BUENA_LATITUDE;
-import static polohalo.ua.locationfence.geofence.Constants.YERBA_BUENA_LONGITUDE;
-import static polohalo.ua.locationfence.geofence.Constants.YERBA_BUENA_RADIUS_METERS;
 
 /**
  * Created by mac on 2/23/16.
@@ -77,10 +66,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     public static final double RADIUS_OF_EARTH_METERS = 6371009;
     int progress = 10;
     private GoogleApiClient mApiClient;
-    private SimpleGeofenceStore mGeofenceStorage;
     private ArrayList<Geofence> mGeofenceList;
-    private SimpleGeofence mAndroidBuildingGeofence;
-    private SimpleGeofence mYerbaBuenaGeofence;
     private PendingIntent mGeofenceRequestIntent;
     private DraggableCircle circle;
     private CoordinatorLayout coordinatorLayout;
@@ -95,6 +81,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     private String[] address;
     private GeofenceLocation location;
     private Long id;
+    private EditText messageText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +96,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 .findFragmentById(R.id.map);
         circleColour =ContextCompat.getColor(getBaseContext(),R.color.map_marker_cirle);
         mapFragment.getMapAsync(this);
-        setUpGeofence();
+        //setUpGeofence();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -124,13 +112,22 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     private void modifyLocationActivity(Long id) {
         location = GeofenceLocation.getById(id);
-
+        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         circle = new DraggableCircle(latLng, location.getRadius());
         addressProgressBar.setProgress((int)location.getRadius());
         if(location.getLabel()!=null)
             if(!location.getLabel().equals(""))
                 labelText.setText(location.getLabel());
+        address = new String[2];
+        address[0] = location.getAddressFirst();
+        address[1] = location.getAddressSecond();
+        mWidthBar.setProgress((int)location.getRadius());
+        radiusText.setText(getResources().getString(R.string.radius) + " = "
+                + (location.getRadius() +
+                getResources().getInteger(R.integer.seekBar_start)) + " m");
+        if(location.getLabel()!="")
+            labelText.setText(location.getLabel());
         addressText.setText(location.getAddressFirst());
         regionText.setText(location.getAddressSecond());
 
@@ -152,10 +149,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
         mApiClient.connect();
         // Instantiate a new geofence storage area.
-        mGeofenceStorage = new SimpleGeofenceStore(this);
         // Instantiate the current List of geofences.
         mGeofenceList = new ArrayList<Geofence>();
-        createGeofences();
     }
     private void setUpBottomSheet(){
         final int radiusMin = getResources().getInteger(R.integer.seekBar_start);
@@ -165,6 +160,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         addressText = (TextView)coordinatorLayout.findViewById(R.id.address);
         labelText = (EditText)coordinatorLayout.findViewById(R.id.label);
         regionText = (TextView)coordinatorLayout.findViewById(R.id.city);
+
         addressProgressBar = (ProgressBar) coordinatorLayout.findViewById(R.id.progressBar_address_loading);
         behavior = BottomSheetBehavior.from(bottomSheet);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -191,15 +187,19 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 // React to dragging events
             }
         });
-        radiusText = (TextView) findViewById(R.id.seekBar_radius);
-        mWidthBar = (SeekBar) findViewById(R.id.seekBar);
-        mWidthBar.setMax(radiusMax);
+        radiusText = (TextView) bottomSheet.findViewById(R.id.seekBar_radius);
+        mWidthBar = (SeekBar) bottomSheet.findViewById(R.id.seekBar);
+        mWidthBar.setMax(radiusMax-radiusMin);//like duh
         mWidthBar.setProgress(50);
         mWidthBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                radiusText.setText(getResources().getString(R.string.radius) + " "
-                        + (seekBar.getProgress() + radiusMin) + " m");
+                //radiusText.setText(getResources().getString(R.string.radius) + " = "
+                //        + (seekBar.getProgress() + radiusMin) + " m");
+                int progress = seekBar.getProgress()+50;
+                String text = "Radius = " + progress + " m";//stupid workaround
+                Log.e(TAG, "new radius = " + text);
+                radiusText.setText(text);
             }
 
             @Override
@@ -227,40 +227,14 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         // store to database
         if(id!=null)
             GeofenceLocation.updateItem(object, id);
-        GeofenceLocation.addItem(object);
-        Log.e(TAG, "getting back " + GeofenceLocation.getAll().size());
-
+        else
+            GeofenceLocation.addItem(object);
         Intent intent = getIntent();
         //intent.putExtra("location", Parcels.wrap(object));
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
 
-    public void createGeofences() {
-        // Create internal "flattened" objects containing the geofence data.
-        mAndroidBuildingGeofence = new SimpleGeofence(
-                ANDROID_BUILDING_ID,                // geofenceId.
-                ANDROID_BUILDING_LATITUDE,
-                ANDROID_BUILDING_LONGITUDE,
-                ANDROID_BUILDING_RADIUS_METERS,
-                GEOFENCE_EXPIRATION_TIME,
-                Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT
-        );
-        mYerbaBuenaGeofence = new SimpleGeofence(
-                YERBA_BUENA_ID,                // geofenceId.
-                YERBA_BUENA_LATITUDE,
-                YERBA_BUENA_LONGITUDE,
-                YERBA_BUENA_RADIUS_METERS,
-                GEOFENCE_EXPIRATION_TIME,
-                Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT
-        );
-
-        // Store these flat versions in SharedPreferences and add them to the geofence list.
-        mGeofenceStorage.setGeofence(ANDROID_BUILDING_ID, mAndroidBuildingGeofence);
-        mGeofenceStorage.setGeofence(YERBA_BUENA_ID, mYerbaBuenaGeofence);
-        mGeofenceList.add(mAndroidBuildingGeofence.toGeofence());
-        mGeofenceList.add(mYerbaBuenaGeofence.toGeofence());
-    }
 
 
     @NeedsPermission(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -329,6 +303,8 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                             regionText.setText(address[1]);
                             regionText.setVisibility(View.VISIBLE);
                         }
+                        else
+                            regionText.setVisibility(View.GONE);
                         addressText.setText(address[0]);
                         addressText.setVisibility(View.VISIBLE);
                         addressProgressBar.setVisibility(View.GONE);
@@ -366,7 +342,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public void onConnected(Bundle bundle) {
         Log.e(TAG, "onConnected");
-        LocationActivityPermissionsDispatcher.populateGeofencesWithCheck(this);
+        //LocationActivityPermissionsDispatcher.populateGeofencesWithCheck(this);
         //finish();
     }
 
@@ -383,7 +359,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
     private PendingIntent getGeofenceTransitionPendingIntent() {
-        Intent intent = new Intent(this, GeofenceService.class);
+        Intent intent = new Intent(this, GeofenceEventService.class);
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -445,6 +421,18 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         double radiusAngle = Math.toDegrees(radius / RADIUS_OF_EARTH_METERS) /
                 Math.cos(Math.toRadians(center.latitude));
         return new LatLng(center.latitude, center.longitude + radiusAngle);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private static double toRadiusMeters(LatLng center, LatLng radius) {

@@ -2,4 +2,6 @@
 <resources>
     <integer name="seekBar_start">50</integer>
     <integer name="seekBar_end">150</integer>
+    <integer name="period_start">5</integer>
+    <integer name="period_end">120</integer>
 </resources>

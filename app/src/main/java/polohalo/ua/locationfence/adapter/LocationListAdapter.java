@@ -31,6 +31,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
 
     public void updateData() {
+        Log.e(TAG, "updating data");
         this.locations = GeofenceLocation.getAll();
         notifyDataSetChanged();
     }
@@ -51,12 +52,19 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
 
     @Override
     public void onBindViewHolder(LocationViewHolder viewHolder, int i) {//todo something with those null checks
+
         viewHolder.ci = locations.get(i);
+        Log.e(TAG, "binding with radius = " + viewHolder.ci.getRadius());
+
         viewHolder.locationAddress.setText(viewHolder.ci.getAddressFirst());
-        if(viewHolder.ci.getLabel()!=null)
+        if(!viewHolder.ci.getLabel().equals(""))
             viewHolder.locationLabel.setText(viewHolder.ci.getLabel() + ", " + (int)viewHolder.ci.getRadius() + " m");
+        else
+            viewHolder.locationLabel.setText( (int)viewHolder.ci.getRadius() + " m");
         viewHolder.locationCity.setText(viewHolder.ci.getAddressSecond());
-        viewHolder.appsCount.setText(viewHolder.ci.getBlockedAppsCount() + " " + context.getResources().getString(R.string.blocked_apps));//todo handle singularity and grammar rules
+        viewHolder.appsCount.setText(viewHolder.ci.getBlockedAppsCount() + " "
+                + (viewHolder.ci.getBlockedAppsCount()==1 ?
+                context.getResources().getString(R.string.blocked_app) : context.getResources().getString(R.string.blocked_apps)));//todo handle singularity and grammar rules
     }
 
     @Override
@@ -126,6 +134,11 @@ public class LocationListAdapter extends RecyclerView.Adapter<LocationListAdapte
             //intent.putExtra("id", ci.getId());
             //context.startActivity(intent);
         }
+    }
+    public void uncheckLastChecked(){
+        highlightedView.setSelected(false);
+        highlightedId=null;
+        highlightedView=null;
     }
     public Long getHighlightedId(){
         Log.e(TAG, "highlighted id is" + highlightedId);//candidate to break everythinh

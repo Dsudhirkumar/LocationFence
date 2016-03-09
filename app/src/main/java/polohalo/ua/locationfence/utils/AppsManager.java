@@ -5,8 +5,10 @@ import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -36,7 +38,19 @@ public class AppsManager {
             Log.d(TAG, "Source dir : " + packageInfo.sourceDir);
             Log.d(TAG, "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
         }
-        return apps;
+
+        return filterApps(apps);
+    }
+
+    private static ArrayList<App> filterApps(ArrayList<App> apps) {
+        ArrayList<App> filteredApps = new ArrayList<>();
+        for(App app : apps ){
+            if(app.getPackageName().contains("com.android.") || app.getPackageName().contains("polohalo.ua.locationfence"))//todo maybe other filters are needed
+                continue;
+            else
+                filteredApps.add(app);
+        }
+        return filteredApps;
     }
 
     public static String printForegroundTask(Service service) {//todo check if permission is granted
@@ -73,9 +87,9 @@ public class AppsManager {
 
     public static boolean blacklistContains(Long triggeredGeoFenceId) {
         blockedApps = App.getBlacklistedApps(triggeredGeoFenceId);
-        Log.e(TAG, blockedApps.size() + "   " + App.getAllBlacklistedApps().size() + "  " + triggeredGeoFenceId);
+        //Log.e(TAG, blockedApps.size() + "   " + App.getAllBlacklistedApps().size() + "  " + triggeredGeoFenceId);
         for(App app : blockedApps){
-            Log.e(TAG, app.getLocationId() +  "  " + triggeredGeoFenceId);
+            //Log.e(TAG,"blacklist contains " + app.getLocationId() +  "  " + triggeredGeoFenceId);
             if(app.getLocationId().equals(triggeredGeoFenceId))
                 return true;
         }
@@ -84,10 +98,33 @@ public class AppsManager {
 
     public static boolean foregroundTaskIsBlocked(String taskName) {
         for(App app :blockedApps){
-            Log.e(TAG, app.getPackageName() +  "  " + taskName);
+           // Log.e(TAG, app.getPackageName() +  "  " + taskName);
             if(app.getPackageName().equals(taskName))
                 return true;
         }
         return false;
+    }
+
+    public static void setRepeatingPeriod(Context context, int period) {
+        SharedPreferences pref =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putInt("period", period);
+        edit.commit();
+    }
+    public static int getRepeatingPeriod(Context context){
+        SharedPreferences pref =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        return pref.getInt("period", 10);
+
+    }
+
+    public static App getAppByName(String taskName, Context context) {
+        List<App> apps = getAppsList(context);
+        for(App app : apps){
+            if(taskName.equals(app.getLabel()))
+                return app;
+        }
+        return new App();
     }
 }

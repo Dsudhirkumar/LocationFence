@@ -57,10 +57,22 @@ public class GeofenceLocation extends Model {
 
     }
     public static void updateItem(GeofenceLocation newData, Long id){
-        new Update(GeofenceLocation.class).set("Latitude = ? and Longitude = ? and addressFirst = ? " +
+        GeofenceLocation location = GeofenceLocation.load(GeofenceLocation.class, id);
+        location.setLatitude(newData.getLatitude());
+        location.setLongitude(newData.getLongitude());
+        location.setRadius(newData.getRadius());
+        location.setAddressFirst(newData.getAddressFirst());
+        location.setAddressSecond(newData.getAddressSecond());
+        location.setLabel(newData.getLabel());
+        location.save();
+        /*
+        Log.e(TAG,"upd = " +
+        new Update(GeofenceLocation.class).set("Latitude = and Longitude = ? and addressFirst = ? " +
                 "and addressSecond = ? and radius = ? and label = ?",
                 newData.getLatitude(), newData.getLongitude(), newData.getAddressFirst(), newData.getAddressSecond(),
-                newData.getRadius(), newData.getLabel()).where("id = ?", id).execute();
+                newData.getRadius(), newData.getLabel())..where("id = ?", id).toSql());*/
+
+
     }
 
     public static List<GeofenceLocation> getAll() {
@@ -101,11 +113,20 @@ public class GeofenceLocation extends Model {
         return "";
     }
 
+
     public void setAddress(String[] address) {
         if(address.length>1)
             this.addressSecond = address[1];
         this.addressFirst = address[0];
     }
+    public void setAddressFirst(String address) {
+        this.addressFirst = address;
+    }
+
+    public void setAddressSecond(String address) {
+        this.addressSecond = address;
+    }
+
 
     public double getRadius() {
         return radius;
@@ -149,4 +170,5 @@ public class GeofenceLocation extends Model {
         newCount++;
         new Update(GeofenceLocation.class).set("blockedAppsCount = ?",newCount).where("id = ?", location).execute();
     }
+
 }

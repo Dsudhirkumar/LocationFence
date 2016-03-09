@@ -9,6 +9,12 @@
         android:icon="@drawable/ic_place"
         android:title="@string/edit_place"
         app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_timer"
+        android:icon="@drawable/ic_timer"
+        android:title="@string/timer"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/action_confirm"
         android:icon="@drawable/ic_confirm"

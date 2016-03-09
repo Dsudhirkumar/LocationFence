@@ -15,6 +15,7 @@
         android:name="com.activeandroid.app.Application"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -26,21 +27,23 @@
             android:value="1" />
 
 
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LocationActivity"
-            android:windowSoftInputMode="adjustResize">
+        <activity android:name=".activity.LocationActivity">
 
         </activity>
-        <activity android:name=".activity.EditActivity">
+        <activity android:name=".activity.EditActivity"
+            android:windowSoftInputMode="adjustResize|adjustNothing"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".activity.BlockedActivity">
         </activity>
-        <service android:name=".service.LongRunningService" >
+        <service android:name=".service.NotificationService" >
         </service>
 
 
@@ -51,10 +54,17 @@
             </intent-filter>
         </receiver>
 
+
+        <receiver android:name=".receiver.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <service
-            android:name=".service.ForegroundService"
+            android:name=".service.ApiClientService"
             android:exported="false" />
-        <service android:name=".service.GeofenceService"/>
+        <service android:name=".service.GeofenceEventService"/>
 
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
         <meta-data
