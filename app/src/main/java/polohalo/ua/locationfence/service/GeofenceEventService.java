@@ -27,12 +27,12 @@ public class GeofenceEventService extends Service {//changed IntentService to Se
         @Override
         public void run() {
             // Do something here on the main thread
-            Log.e(TAG, "Handler called on  customThread, service state = " + running);
+            //Log.e(TAG, "Handler called on  customThread, service state = " + running);
             if (running) {
                 if (AppsManager.blacklistContains(triggeredGeoFenceId)) {
                     if (AppsManager.foregroundTaskIsBlocked(AppsManager.printForegroundTask(GeofenceEventService.this))) {
                         startBlockedActivity(AppsManager.printForegroundTask(GeofenceEventService.this));
-                        Log.e(TAG, "blocked this app");
+                        //Log.e(TAG, "blocked this app");
                     }
                 }
                 handler.postDelayed(runnableCode, 8000);//todo play with delay and check if all the created activities are the same or new ones
@@ -53,12 +53,12 @@ public class GeofenceEventService extends Service {//changed IntentService to Se
     public void onCreate() {
         super.onCreate();
         running = true;
-        Log.e(TAG, "onCreate, here");
+        //Log.e(TAG, "onCreate, here");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand, receiver noticed geofence event");
+        //Log.e(TAG, "onStartCommand, receiver noticed geofence event");
         period  = AppsManager.getRepeatingPeriod(getBaseContext());
         if(mScreenStateReceiver==null) {//todo why we need another receiver?
            // IntentFilter screenStateFilter = new IntentFilter();
@@ -67,39 +67,38 @@ public class GeofenceEventService extends Service {//changed IntentService to Se
            // registerReceiver(mScreenStateReceiver, screenStateFilter);
         }
 
-        Log.e(TAG, "onHandleIntent1 " + String.valueOf(intent == null));
+        //Log.e(TAG, "onHandleIntent1 " + String.valueOf(intent == null));
         GeofencingEvent geoFenceEvent = GeofencingEvent.fromIntent(intent);
         if(geoFenceEvent!=null)
         if (geoFenceEvent.hasError()||geoFenceEvent.getTriggeringGeofences()==null) {//todo first of all requires permission, second - still null
             //int errorCode = geoFenceEvent.getErrorCode();
-            Log.e(TAG, "Location Services error");
+            //Log.e(TAG, "Location Services error");
             stopRepeatingService(triggeredGeoFenceId);
         } else {
-            Log.e(TAG, "hip hop " + geoFenceEvent.getTriggeringGeofences().get(0).getRequestId());
+            //Log.e(TAG, "hip hop " + geoFenceEvent.getTriggeringGeofences().get(0).getRequestId());
             triggeredGeoFenceId =Long.valueOf(geoFenceEvent.getTriggeringGeofences().get(0).getRequestId());
             int transitionType = geoFenceEvent.getGeofenceTransition();
             if (Geofence.GEOFENCE_TRANSITION_ENTER == transitionType) {
-                Log.e(TAG, "entering geofence");
+                //Log.e(TAG, "entering geofence");
                 startRepeatingService(triggeredGeoFenceId);
             } else if (Geofence.GEOFENCE_TRANSITION_EXIT == transitionType) {
-                Log.e(TAG, "exiting geofence");
+                //Log.e(TAG, "exiting geofence");
                 stopRepeatingService(triggeredGeoFenceId);
             }
-            Log.e(TAG, "with id = " + triggeredGeoFenceId);
+            //Log.e(TAG, "with id = " + triggeredGeoFenceId);
         }
         return START_STICKY;//todo try out START_REDELIVER_INTENT from documentation
     }
 
     public void quitThread(){
-        Log.e(TAG, "quitThread");
+        //Log.e(TAG, "quitThread");
         handler.removeCallbacks(runnableCode);
         handlerThread.quit();
-
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e(TAG, "onDestroy");
+        //Log.e(TAG, "onDestroy");
         running = false;
         unregisterReceiver(mScreenStateReceiver);
         mScreenStateReceiver=null;

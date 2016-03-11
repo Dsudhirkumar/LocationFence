@@ -41,9 +41,9 @@ public class GeofenceLocation extends Model {
          List<GeofenceLocation> list = new Select()
                 .from(GeofenceLocation.class)
                 .execute();
-        Log.e(TAG, "getByid " + list.size());
+        //Log.e(TAG, "getByid " + list.size());
         for(int i = 0 ; i<list.size();i++){
-            Log.e(TAG,  id +   "    " + list.get(i).getId()  +  " "+list.get(i).getLabel());
+            //Log.e(TAG,  id +   "    " + list.get(i).getId()  +  " "+list.get(i).getLabel());
             if(id.equals(list.get(i).getId()))
                 return list.get(i);
         }

@@ -53,7 +53,7 @@ public class App extends Model {
     }
 
     public static void addItemToBlacklist(App item, Long locationId){
-        Log.e(TAG, "adding item where location = " + locationId);
+        //Log.e(TAG, "adding item where location = " + locationId);
         item.setLocationId(locationId);
         item.save();
         //getBlacklistedApps();

@@ -34,7 +34,7 @@ public class AppsBlacklistAdapter extends RecyclerView.Adapter<AppsBlacklistAdap
     public void updateData() {
         this.apps = App.getBlacklistedApps(location);
         notifyDataSetChanged();
-        Log.e(TAG, "data updated " +  apps.size() + "  " + location);
+        //Log.e(TAG, "data updated " +  apps.size() + "  " + location);
         //todo remove items which are not in main List
     }
 
@@ -90,7 +90,7 @@ public class AppsBlacklistAdapter extends RecyclerView.Adapter<AppsBlacklistAdap
 
         @Override
         public void onClick(View view) {
-            Log.e(TAG, " size of blacklist1 " + App.getAllBlacklistedApps().size());
+            //Log.e(TAG, " size of blacklist1 " + App.getAllBlacklistedApps().size());
             lastRemoved = apps.get(getAdapterPosition());
             lastRemovedPostion = getAdapterPosition();
             String packageName = apps.get(getAdapterPosition()).getPackageName();
@@ -98,7 +98,7 @@ public class AppsBlacklistAdapter extends RecyclerView.Adapter<AppsBlacklistAdap
             apps.remove(getAdapterPosition());
             App.deleteItem(packageName, location);
             notifyItemRemoved(getAdapterPosition());
-            Log.e(TAG, " size of blacklist2 " + App.getAllBlacklistedApps().size());
+            //Log.e(TAG, " size of blacklist2 " + App.getAllBlacklistedApps().size());
 
 
             Snackbar snackbar = Snackbar
@@ -106,8 +106,8 @@ public class AppsBlacklistAdapter extends RecyclerView.Adapter<AppsBlacklistAdap
                     .setAction(context.getResources().getString(R.string.undo), new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Log.e(TAG, "onCLickSnackBar" + location);
-                            Log.e(TAG, " size of blacklist3 " + App.getAllBlacklistedApps().size());
+                            //Log.e(TAG, "onCLickSnackBar" + location);
+                            //Log.e(TAG, " size of blacklist3 " + App.getAllBlacklistedApps().size());
                             //App.addItemToBlacklist(lastRemoved, location);
                             App app = new App();
                             //todo doesnt work because holds reference to the object, workaround
@@ -117,7 +117,7 @@ public class AppsBlacklistAdapter extends RecyclerView.Adapter<AppsBlacklistAdap
                             app.setPackageName(lastRemoved.getPackageName());
                             App.addItemToBlacklist(app, location);
                             GeofenceLocation.increaseAppCount(location);
-                            Log.e(TAG, " size of blacklist4 " + App.getAllBlacklistedApps().size());
+                            //Log.e(TAG, " size of blacklist4 " + App.getAllBlacklistedApps().size());
                             apps.add(lastRemovedPostion, lastRemoved);
                             notifyItemInserted(lastRemovedPostion);
                         }

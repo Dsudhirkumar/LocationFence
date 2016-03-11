@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -46,7 +45,7 @@ public class EditActivity extends AppCompatActivity {
         }
         else {
             Intent intent = getIntent();
-            Log.e(TAG, "getLong " + intent.getExtras().getLong("id"));
+            //Log.e(TAG, "getLong " + intent.getExtras().getLong("id"));
             location = GeofenceLocation.getById(intent.getExtras().getLong("id"));
         }
         setUpViewPager();
@@ -60,7 +59,7 @@ public class EditActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_back);
         getSupportActionBar().setTitle("");
-        Log.e(TAG, "ACTIVITY" + location.getId());
+        //Log.e(TAG, "ACTIVITY" + location.getId());
         GeofenceEventService.setRunning(false);
 
 
@@ -111,7 +110,7 @@ public class EditActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         appsListFragment = AppsListFragment.newInstance(location.getId());
         appsBlacklistFragment = BlacklistFragment.newInstance(location.getId());
-        Log.e(TAG,"setUpViewPAger with " + location.getId() );
+        //Log.e(TAG,"setUpViewPAger with " + location.getId() );
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(appsListFragment, getString(R.string.all_apps));
         adapter.addFragment(appsBlacklistFragment, getString(R.string.blacklist));

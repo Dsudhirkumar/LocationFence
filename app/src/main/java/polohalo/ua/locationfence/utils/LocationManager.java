@@ -4,7 +4,6 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -56,11 +55,9 @@ public class LocationManager {
                         for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
                             strAddress.append(fetchedAddress.getAddressLine(i)).append("\n");
                         }
-                        Log.e(TAG, "I am at: " + strAddress.toString());
+                        //Log.e(TAG, "I am at: " + strAddress.toString());
                         address = strAddress.toString();
-                    } else
-                        Log.e(TAG, "No location found");
-
+                    }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

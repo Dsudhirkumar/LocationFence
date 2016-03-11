@@ -1,14 +1,11 @@
 package polohalo.ua.locationfence.activity;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -35,10 +32,13 @@ import polohalo.ua.locationfence.adapter.LocationListAdapter;
 import polohalo.ua.locationfence.fragment.PermissionDialogFragment;
 import polohalo.ua.locationfence.model.GeofenceLocation;
 import polohalo.ua.locationfence.service.NotificationService;
+import polohalo.ua.locationfence.utils.AppsManager;
 
 public class MainActivity extends AppCompatActivity {
     private static final int NEW_LOCATION = 1;
     private static final int REQUEST_WRITE_SETTINGS = 4;
+    private static final int EDIT_LOCATION = 2;
+    private static final int EDIT_APPS = 3;
     private MainActivity activity;
 
     BroadcastReceiver mReceiver = null;
@@ -80,30 +80,36 @@ public class MainActivity extends AppCompatActivity {
         setUpBottomView();
         setUpListView();
         setUpToolbar();
-        Log.e(TAG, "startActivitiy");
+        setUpNotificationService();
         //launchService();
         //todo need to acquire a permission for api+23
         //checkForUsagePermission();
 
 
         //todo navigate user to settings app
-        //Intent startIntent = new Intent(MainActivity.this, NotificationService.class);
-        //startIntent.setAction(Constants.STARTFOREGROUND_ACTION);
-        //startService(startIntent);
+
+
     }
+
+    private void setUpNotificationService(){
+        if(AppsManager.isMyServiceRunning(this, NotificationService.class)) {
+            toggleButton.setChecked(true);
+        }
+        else {
+            toggleButton.setChecked(true);
+            startNotificationService();
+        }
+    }
+
 
     private void setUpToolbar() {
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    launchNotificationService();
-                    // The toggle is enabled
+                    startNotificationService();
                 } else {
-                    foregroundIntent = new Intent(MainActivity.this, NotificationService.class);
                     stopService(foregroundIntent);
-                    Log.e(TAG, "unchecked");
-                    // The toggle is disabled
                 }
             }
         });
@@ -112,11 +118,9 @@ public class MainActivity extends AppCompatActivity {
     private void checkForUsagePermission() {
         if(Build.VERSION.SDK_INT>=23)
             if(!hasUsagePermission(this)) {
-                Log.e(TAG, "no permission");
+                //Log.e(TAG, "no permission");
                 showPermissionDialog();
             }
-            else
-                Log.e(TAG, "has permission");
     }
     private boolean hasUsagePermission(Context context){
         AppOpsManager appOps = (AppOpsManager)
@@ -136,36 +140,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    private boolean isMyServiceRunning() {
-        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if ("polohalo.ua.locationfence.service.ScreenService".equals(service.service.getClassName())) {
-                return true; // Package name matches, our service is running
-            }
-        }
-        return false;
-    }
-
-
-
     private void setUpBottomView() {
         behavior = BottomSheetBehavior.from(bottomView);
         behavior.setHideable(true);
 
-        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                // React to state change
-                Log.e(TAG, "stateChanged");
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                // React to dragging events
-                //Log.e(TAG,"onSlide");
-
-            }
-        });
         viewDelete = (LinearLayout) bottomView.findViewById(R.id.item_delete);
         viewManage = (LinearLayout) bottomView.findViewById(R.id.item_manage_apps);
         viewEdit = (LinearLayout) bottomView.findViewById(R.id.item_edit);
@@ -173,13 +151,11 @@ public class MainActivity extends AppCompatActivity {
         viewManage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //adapter.removeHighlightedItem();//todo doesnt work when returning from app
                 setBottomViewState(BottomSheetBehavior.STATE_HIDDEN);
                 Intent intent = new Intent(MainActivity.this, EditActivity.class);
-                Log.e(TAG, "highlightedItem = " + adapter.getHighlightedId());
                 intent.putExtra("id", adapter.getHighlightedId());
                 adapter.uncheckLastChecked();
-                startActivity(intent);
+                startActivityForResult(intent, EDIT_APPS);
 
 
             }
@@ -199,11 +175,10 @@ public class MainActivity extends AppCompatActivity {
                 //adapter.removeHighlightedItem();//todo figure out something different to restore view
                 setBottomViewState(BottomSheetBehavior.STATE_HIDDEN);
                 Intent intent = new Intent(MainActivity.this, LocationActivity.class);
-                Log.e(TAG, "highlightedItem = " + adapter.getHighlightedId());
+                //Log.e(TAG, "highlightedItem = " + adapter.getHighlightedId());
                 intent.putExtra("id", adapter.getHighlightedId());
                 adapter.uncheckLastChecked();
-                startActivity(intent);
-
+                startActivityForResult(intent, EDIT_LOCATION);
             }
         });
 
@@ -211,35 +186,30 @@ public class MainActivity extends AppCompatActivity {
 
     public void setBottomViewState(int state) {
         behavior.setState(state);
-
     }
-
 
     private void setUpFAB() {
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.add_location_fab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.e(TAG, "FAB pressed");
-                String transitionName = "reveal";
                 Intent intent = new Intent(MainActivity.this, LocationActivity.class);
                 startActivityForResult(intent, NEW_LOCATION);
-                //startActivity(intent);
             }
         });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        //todo if we played with location, we should restart the service
         if (requestCode == REQUEST_WRITE_SETTINGS) {
             if(!hasUsagePermission(this))
                 finish();//no chance to continue using app without permission, cant just check resultCode, may be null
-            Log.e(TAG, "onActivityResult, request for settings, result codes " + requestCode + " " + resultCode);
+            //Log.e(TAG, "onActivityResult, request for settings, result codes " + requestCode + " " + resultCode);
         }
-        else if (requestCode == NEW_LOCATION) {
-            if (resultCode == Activity.RESULT_OK) {
-                handleListViewUpdate();
-            } else
-                Log.e(TAG, "back");
+        else if (requestCode == NEW_LOCATION || requestCode==EDIT_LOCATION) {
+            handleListViewUpdate();
+            handleNotificationServiceState();//data has changed, update
         }
     }
 
@@ -268,19 +238,25 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         checkForUsagePermission();
         adapter.updateData();
-        //behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        launchNotificationService();
-
-    }
-    private void launchNotificationService(){
-
-        if(GeofenceLocation.getAll().size()!=0)
-            if(foregroundIntent==null) {
-                foregroundIntent = new Intent(MainActivity.this, NotificationService.class);
-                startService(foregroundIntent);
-            }
+        handleNotificationServiceState();
     }
 
+    private void handleNotificationServiceState() {
+        if(toggleButton.isChecked()){
+            if(GeofenceLocation.getAll().size()!=0 )
+                startNotificationService();
+        }
+        else
+            stopService(foregroundIntent);
+    }
+    /** handles conditions at which service is useless to start
+     * */
+    private void startNotificationService(){
+        if(GeofenceLocation.getAll().size()!=0) {
+            foregroundIntent = new Intent(MainActivity.this, NotificationService.class);
+            startService(foregroundIntent);
+        }
+    }
 
     private void setUpListView() {
         recList = (RecyclerView) findViewById(R.id.locationsList);

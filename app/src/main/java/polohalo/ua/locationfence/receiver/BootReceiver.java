@@ -15,7 +15,7 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e(TAG, "onReceiver");
+        //Log.e(TAG, "onReceiver");
         //todo trying to use notification service
         Intent intentService = new Intent(context, NotificationService.class);
         context.startService(intentService);

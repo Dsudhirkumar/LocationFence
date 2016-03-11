@@ -73,7 +73,7 @@ public class AppsManager {
             List<ActivityManager.RunningAppProcessInfo> tasks = am.getRunningAppProcesses();
             currentApp = tasks.get(0).processName;
         }
-        Log.e(TAG, "Current App in foreground is: " + currentApp);
+        //Log.e(TAG, "Current App in foreground is: " + currentApp);
         return currentApp;
     }
 
@@ -128,4 +128,15 @@ public class AppsManager {
                     return app;
             }
             return new App();
-        }}
+        }
+
+    public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

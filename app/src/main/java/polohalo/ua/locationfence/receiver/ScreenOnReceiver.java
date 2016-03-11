@@ -20,16 +20,16 @@ public class ScreenOnReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e(TAG, "onReceive");
+        //Log.e(TAG, "onReceive");
         if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-            Log.e(TAG, "SCREEN_OFF");
+            //Log.e(TAG, "SCREEN_OFF");
             //GeofenceEventService.setRunning(false);
             //todo unregister geofence
 
             ApiClientService.stopGeofence(new ResultCallback<Status>() {
                 @Override
                 public void onResult(Status status) {
-                    Log.e(TAG, "stoping geofence"+status.getStatus());
+                    //Log.e(TAG, "stoping geofence"+status.getStatus());
                 }
             });
             GeofenceEventService.setRunning(false);
@@ -38,9 +38,8 @@ public class ScreenOnReceiver extends BroadcastReceiver {
         }
 
         else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-            Log.e(TAG, "SCREEN_ON");
+            //Log.e(TAG, "SCREEN_ON");
             Intent intentService = new Intent(context, ApiClientService.class);
-            //GeofenceEventService.setRunning(true);
             context.startService(intentService);
             GeofenceEventService.setRunning(true);
 

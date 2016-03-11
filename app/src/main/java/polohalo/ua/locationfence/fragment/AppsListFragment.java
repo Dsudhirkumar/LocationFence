@@ -52,7 +52,7 @@ public class AppsListFragment extends Fragment {
         llm = new LinearLayoutManager(getActivity());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
-        Log.e(TAG, "setUpRecycler with " + location);
+        //Log.e(TAG, "setUpRecycler with " + location);
         adapter = new AppsListAdapter(getActivity(), location);
         recList.setAdapter(adapter);
         updateAdapterData();

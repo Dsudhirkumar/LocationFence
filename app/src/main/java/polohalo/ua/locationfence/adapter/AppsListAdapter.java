@@ -41,7 +41,7 @@ public class AppsListAdapter extends RecyclerView.Adapter<AppsListAdapter.AppVie
         protected Void doInBackground(Void... params) {
             apps=AppsManager.getAppsList(context);
             List<App> blacklistedApps = App.getBlacklistedApps(location);
-            Log.e(TAG, apps.size() + " versus " + blacklistedApps.size());
+            //Log.e(TAG, apps.size() + " versus " + blacklistedApps.size());
 
             for(int i = 0; i<apps.size();i++){
                 for(int k=0;k<blacklistedApps.size();k++){
@@ -64,7 +64,7 @@ public class AppsListAdapter extends RecyclerView.Adapter<AppsListAdapter.AppVie
     public AppsListAdapter(Context context, Long location) {//TODO maybe move updating to another thread to make app more responsive
         this.context = context;
         //selectedAppsMap = App.getBlacklistedApps(location);
-        Log.e(TAG, "location is " + location);
+        //Log.e(TAG, "location is " + location);
         this.location = location;
 
 
@@ -121,7 +121,7 @@ public class AppsListAdapter extends RecyclerView.Adapter<AppsListAdapter.AppVie
         @Override
         public void onClick(View view) {
             String packageName = apps.get(getAdapterPosition()).getPackageName();//no id, got it from system
-            //Log.e(TAG,"id="+id+"  loc=" + location);
+            ////Log.e(TAG,"id="+id+"  loc=" + location);
             if(apps.get(getAdapterPosition()).isSelected()) {
                 //should be removed
                 //todo add a
@@ -139,7 +139,7 @@ public class AppsListAdapter extends RecyclerView.Adapter<AppsListAdapter.AppVie
 
 
             }
-            Log.e(TAG, "total apps selected " + selectedAppsMap.size() + "  " +  getAdapterPosition()  + "    "  + location);
+            //Log.e(TAG, "total apps selected " + selectedAppsMap.size() + "  " +  getAdapterPosition()  + "    "  + location);
             notifyDataSetChanged();
 
         }

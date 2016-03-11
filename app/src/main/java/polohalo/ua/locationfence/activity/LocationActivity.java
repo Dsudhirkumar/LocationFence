@@ -103,7 +103,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         Bundle extras = intent.getExtras();
         if(extras!=null) {
             id = extras.getLong("id");
-            Log.e(TAG, "and the id is " + id);
+            ////Log.e(TAG, "and the id is " + id);
             //todo we are coming from EditActivity, try to modify location
 
         }
@@ -165,7 +165,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         behavior = BottomSheetBehavior.from(bottomSheet);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.e(TAG, "FAB pressed");
+                ////Log.e(TAG, "FAB pressed");
                 saveDataAndFinishActivity();
             }
         });
@@ -198,7 +198,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 //        + (seekBar.getProgress() + radiusMin) + " m");
                 int progress = seekBar.getProgress()+50;
                 String text = "Radius = " + progress + " m";//stupid workaround
-                Log.e(TAG, "new radius = " + text);
+                ////Log.e(TAG, "new radius = " + text);
                 radiusText.setText(text);
             }
 
@@ -242,10 +242,10 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
-            Log.e(TAG, "app has location permission");
+            ////Log.e(TAG, "app has location permission");
         } else {
             // Show rationale and request permission.
-            Log.e(TAG, "app doesn't have location permission");
+            ////Log.e(TAG, "app doesn't have location permission");
             //todo add functionality to ask only once etc, button on location
         }
 
@@ -253,12 +253,12 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     @OnPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION)
     public void onLocationDenied() {
-        Log.e(TAG, "app doesn't have location permission");
+        ////Log.e(TAG, "app doesn't have location permission");
     }
 
     @OnNeverAskAgain(Manifest.permission.ACCESS_FINE_LOCATION)
     public void onLocationNeverAsk() {
-        Log.e(TAG, "app WON'T have location permission");
+        ////Log.e(TAG, "app WON'T have location permission");
     }
 
     @Override
@@ -297,7 +297,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
                 LocationManager.getInstance().getMyLocationAddress(LocationActivity.this, latLng, new LocationManager.OnAddressListener() {
                     @Override
                     public void onSuccess(String result) {
-                        Log.e(TAG, "success " + result);
+                        ////Log.e(TAG, "success " + result);
                         address = result.split("\\n");
                         if(address.length>1) {
                             regionText.setText(address[1]);
@@ -313,7 +313,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
                     @Override
                     public void onError() {
-                        Log.e(TAG, "error");
+                        ////Log.e(TAG, "error");
                         regionText.setVisibility(View.GONE);
                         addressText.setVisibility(View.GONE);
                         addressProgressBar.setVisibility(View.GONE);
@@ -326,7 +326,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Log.e(TAG, "onMarkerClick");
+                ////Log.e(TAG, "onMarkerClick");
                 behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 circle.getCenterMarker().remove();
                 circle.getCircle().remove();
@@ -341,7 +341,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.e(TAG, "onConnected");
+        //////Log.e(TAG, "onConnected");
         //LocationActivityPermissionsDispatcher.populateGeofencesWithCheck(this);
         //finish();
     }
@@ -371,7 +371,7 @@ public class LocationActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         int errorCode = connectionResult.getErrorCode();
-        Log.e(TAG, "Connection to Google Play services failed with error code " + errorCode);
+        ////Log.e(TAG, "Connection to Google Play services failed with error code " + errorCode);
 
     }
 

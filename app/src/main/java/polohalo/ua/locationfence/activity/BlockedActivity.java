@@ -2,7 +2,6 @@ package polohalo.ua.locationfence.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,7 +24,7 @@ public class BlockedActivity extends AppCompatActivity {
             app =AppsManager.getAppByPackage(savedInstanceState.getString("taskName"), getBaseContext());
         else
             app = AppsManager.getAppByPackage(getIntent().getExtras().getString("taskName"), getBaseContext());
-        Log.e(TAG, getIntent().getExtras().getString("taskName"));
+        //Log.e(TAG, getIntent().getExtras().getString("taskName"));
         setContentView(R.layout.activity_blocked);
         setUpViews();
 

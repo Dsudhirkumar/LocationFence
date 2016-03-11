@@ -24,11 +24,12 @@ public class NotificationService extends Service {
     private static final int FOREGROUND_SERVICE = 4;
 
     private ScreenOnReceiver mReceiver;
+    private Intent clientService;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand ");
-            Log.e(TAG, "Received Start Foreground Intent ");
+        //Log.e(TAG, "onStartCommand ");
+            //Log.e(TAG, "Received Start Foreground Intent ");
             Intent notificationIntent = new Intent(this, MainActivity.class);
             notificationIntent.setAction(MAIN_ACTION);
             notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -47,7 +48,7 @@ public class NotificationService extends Service {
             registerReceiver();//todo we must start ApiClientService NOW, not on screen change
             startApiClient();
         //} else if (intent.getAction().equals(Constants.STOPFOREGROUND_ACTION)) {
-        //    Log.e(TAG, "Received Stop Foreground Intent");
+        //    //Log.e(TAG, "Received Stop Foreground Intent");
         //    stopForeground(true);
         //    stopSelf();
         return START_STICKY;
@@ -55,17 +56,17 @@ public class NotificationService extends Service {
     }
 
     private void startApiClient() {
-        Log.e(TAG, "initial ApiCLient start");
-        Intent intentService = new Intent(NotificationService.this, ApiClientService.class);
+        //Log.e(TAG, "initial ApiCLient start");
+        clientService = new Intent(NotificationService.this, ApiClientService.class);
         //GeofenceEventService.setRunning(true);
-        startService(intentService);
+        startService(clientService);
         GeofenceEventService.setRunning(true);
 
         //register geofence
     }
 
     private void registerReceiver(){//todo it only registers screen of/off shouls be also ApiClientService
-        Log.e(TAG, "registeringReceiver");
+        //Log.e(TAG, "registeringReceiver");
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
@@ -77,6 +78,8 @@ public class NotificationService extends Service {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mReceiver);
+        if(clientService!=null)
+            stopService(clientService);
         //todo maybe stop GeofenceService
         Log.i(TAG, "In onDestroy");
     }
